@@ -1,0 +1,919 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101014">
+<meta name="description" content="KaryaKit adalah toolkit gratis untuk penulis, penerjemah, dan kreator konten.">
+<title>KaryaKit — Creative Workspace</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #101014;
+  --panel: #18181f;
+  --panel2: #20202a;
+  --border: #30303d;
+  --text: #f5f3fa;
+  --muted: #a09eaf;
+  --accent: #a78bfa;
+  --accent2: #8b5cf6;
+  --green: #86efac;
+  --red: #fca5a5;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 50% -20%, #352553 0%, transparent 48%),
+    var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+button, input, textarea, select { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible,
+textarea:focus-visible, a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+a { color: inherit; text-decoration: none; }
+header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #101014ed;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+}
+.nav {
+  max-width: 1100px;
+  margin: auto;
+  padding: 16px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.brand {
+  font-size: 21px;
+  font-weight: 850;
+  letter-spacing: -1px;
+}
+.brand span { color: var(--accent); }
+.nav-tag {
+  color: var(--muted);
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 7px 11px;
+}
+main { max-width: 1100px; margin: auto; padding: 34px 22px 65px; }
+.hero { padding: 35px 0 27px; }
+.eyebrow {
+  display: inline-block;
+  border: 1px solid #51406d;
+  background: #241c35;
+  color: #d8c8ff;
+  border-radius: 30px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+h1 {
+  font-size: clamp(34px, 6vw, 58px);
+  letter-spacing: -2.7px;
+  line-height: 1.08;
+  margin: 20px 0 14px;
+  max-width: 720px;
+}
+h1 span {
+  background: linear-gradient(90deg, #c4b5fd, #a78bfa, #e9d5ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero p {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.8;
+  max-width: 650px;
+  margin: 0;
+}
+.section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 27px 0 16px;
+}
+h2 { font-size: 21px; margin: 0; letter-spacing: -.5px; }
+h3 { font-size: 15px; margin: 0; }
+.small { color: var(--muted); font-size: 12px; line-height: 1.6; }
+.tools {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.tool-card {
+  background: linear-gradient(145deg, #1d1c26, #17171e);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 18px;
+  text-align: left;
+  color: var(--text);
+  min-height: 150px;
+  transition: transform .18s, border-color .18s, background .18s;
+}
+.tool-card:hover {
+  transform: translateY(-3px);
+  border-color: #7960ae;
+  background: #211d2b;
+}
+.tool-icon {
+  width: 39px;
+  height: 39px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  background: #302544;
+  color: #d8c8ff;
+  font-size: 20px;
+  margin-bottom: 14px;
+}
+.tool-card p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+  margin: 8px 0 0;
+}
+.workspace {
+  margin-top: 26px;
+  border: 1px solid var(--border);
+  background: #15151c;
+  border-radius: 18px;
+  overflow: hidden;
+}
+.workspace-head {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.workspace-head p { margin: 5px 0 0; }
+.workspace-body { padding: 20px; }
+.tool-panel { display: none; }
+.tool-panel.active { display: block; }
+label {
+  display: block;
+  color: #d8d5e3;
+  font-size: 13px;
+  font-weight: 650;
+  margin: 0 0 8px;
+}
+textarea, input, select {
+  width: 100%;
+  color: var(--text);
+  background: #101016;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 13px;
+}
+textarea {
+  resize: vertical;
+  min-height: 180px;
+  line-height: 1.7;
+}
+textarea::placeholder, input::placeholder { color: #777486; }
+.field { margin-bottom: 15px; min-width: 0; }
+.row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.btn {
+  border: 1px solid var(--border);
+  background: var(--panel2);
+  color: var(--text);
+  border-radius: 9px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  transition: background .15s;
+}
+.btn:hover { background: #343342; }
+.btn.primary {
+  background: var(--accent2);
+  border-color: var(--accent2);
+  color: white;
+}
+.btn.primary:hover { background: #7c3aed; }
+.btn.danger { color: var(--red); }
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+.stat {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: 13px;
+  min-width: 0;
+}
+.stat strong { display: block; font-size: 23px; letter-spacing: -.7px; overflow-wrap: anywhere; }
+.stat span { color: var(--muted); font-size: 11px; display: block; margin-top: 5px; }
+.two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.result {
+  background: #101016;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  line-height: 1.8;
+  min-height: 80px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.diff-added {
+  color: var(--green);
+  background: #173024;
+  border-radius: 3px;
+}
+.diff-removed {
+  color: var(--red);
+  background: #351c24;
+  text-decoration: line-through;
+  border-radius: 3px;
+}
+.table-wrap { overflow-x: auto; margin-top: 16px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td {
+  text-align: left;
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+th { color: var(--muted); font-weight: 650; }
+td .btn { padding: 6px 8px; margin: 2px; }
+.empty { color: var(--muted); padding: 18px 0; font-size: 13px; }
+.notice {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+  margin-top: 12px;
+}
+.status { min-height: 20px; color: var(--green); font-size: 12px; margin-top: 10px; }
+footer {
+  max-width: 1100px;
+  margin: auto;
+  padding: 23px 22px 32px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+footer a { text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 800px) {
+  .tools { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  main { padding: 20px 14px 45px; }
+  .nav { padding: 13px 15px; }
+  .nav-tag { font-size: 10px; }
+  .hero { padding-top: 27px; }
+  h1 { letter-spacing: -1.8px; }
+  .tools { gap: 9px; }
+  .tool-card { padding: 13px; min-height: 145px; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .two-col { grid-template-columns: 1fr; }
+  .workspace-head, .workspace-body { padding: 15px; }
+  .section-heading { align-items: start; flex-direction: column; }
+  textarea { min-height: 160px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <nav class="nav" aria-label="Navigasi utama">
+    <a href="#" class="brand" aria-label="KaryaKit beranda">Karya<span>Kit</span>.</a>
+    <span class="nav-tag">CREATIVE TOOLKIT · GRATIS</span>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <span class="eyebrow">YOUR CREATIVE WORKSPACE</span>
+    <h1>Ide bagus layak menjadi <span>karya hebat.</span></h1>
+    <p>
+      Toolkit praktis untuk penulis, penerjemah, dan kreator.
+      Rapikan teks, periksa tulisan, dan kelola istilah dalam satu tempat.
+      Gratis digunakan langsung dari browser.
+    </p>
+  </section>
+
+  <section aria-labelledby="tools-title">
+    <div class="section-heading">
+      <div>
+        <h2 id="tools-title">Pilih alatmu</h2>
+        <p class="small">Empat alat praktis. Tanpa akun dan tanpa API berbayar.</p>
+      </div>
+    </div>
+
+    <div class="tools">
+      <button class="tool-card" data-open="counter">
+        <span class="tool-icon" aria-hidden="true">Aa</span>
+        <h3>Word Counter</h3>
+        <p>Hitung kata, karakter, dan paragraf secara langsung.</p>
+      </button>
+      <button class="tool-card" data-open="cleaner">
+        <span class="tool-icon" aria-hidden="true">⌘</span>
+        <h3>Text Cleaner</h3>
+        <p>Bersihkan spasi dan rapikan format tulisan.</p>
+      </button>
+      <button class="tool-card" data-open="comparator">
+        <span class="tool-icon" aria-hidden="true">⇄</span>
+        <h3>Text Comparator</h3>
+        <p>Bandingkan dua teks dan temukan perubahannya.</p>
+      </button>
+      <button class="tool-card" data-open="glossary">
+        <span class="tool-icon" aria-hidden="true">文</span>
+        <h3>Glossary Manager</h3>
+        <p>Simpan dan kelola istilah terjemahanmu.</p>
+      </button>
+    </div>
+  </section>
+
+  <section class="workspace" id="workspace" aria-labelledby="workspace-title">
+    <div class="workspace-head">
+      <div>
+        <h2 id="workspace-title">Word Counter</h2>
+        <p class="small" id="workspace-description">Statistik tulisan diperbarui secara langsung.</p>
+      </div>
+      <button class="btn" id="reset-tool" type="button">Reset alat</button>
+    </div>
+
+    <div class="workspace-body">
+      <section class="tool-panel active" id="panel-counter">
+        <div class="field">
+          <label for="counter-input">Teks yang ingin dihitung</label>
+          <textarea id="counter-input" placeholder="Mulai menulis atau tempel teksmu di sini..."></textarea>
+        </div>
+        <div class="stats" aria-live="polite">
+          <div class="stat"><strong id="count-words">0</strong><span>Kata</span></div>
+          <div class="stat"><strong id="count-chars">0</strong><span>Karakter</span></div>
+          <div class="stat"><strong id="count-no-spaces">0</strong><span>Tanpa spasi</span></div>
+          <div class="stat"><strong id="count-paragraphs">0</strong><span>Paragraf</span></div>
+        </div>
+        <div class="row">
+          <button class="btn primary" id="counter-copy" type="button">Salin teks</button>
+          <button class="btn" id="counter-clear" type="button">Hapus teks</button>
+        </div>
+        <p class="notice">Penghitungan kata menggunakan pemisahan berdasarkan spasi. Tanda baca yang melekat pada kata tetap dihitung sebagai bagian dari kata tersebut.</p>
+      </section>
+
+      <section class="tool-panel" id="panel-cleaner">
+        <div class="field">
+          <label for="cleaner-input">Teks asli</label>
+          <textarea id="cleaner-input" placeholder="Tempel tulisan yang ingin dirapikan..."></textarea>
+        </div>
+        <div class="field">
+          <label for="cleaner-mode">Metode pembersihan</label>
+          <select id="cleaner-mode">
+            <option value="spaces">Rapikan spasi berlebihan</option>
+            <option value="lines">Hapus baris kosong berlebihan</option>
+            <option value="trim">Hapus spasi di awal dan akhir baris</option>
+            <option value="all">Semua pembersihan</option>
+          </select>
+        </div>
+        <div class="row" style="margin-bottom:15px">
+          <button class="btn primary" id="cleaner-run" type="button">Bersihkan teks</button>
+          <button class="btn" id="cleaner-swap" type="button">Gunakan hasil sebagai input</button>
+          <button class="btn" id="cleaner-copy" type="button">Salin hasil</button>
+        </div>
+        <label for="cleaner-output">Hasil</label>
+        <textarea id="cleaner-output" placeholder="Hasil pembersihan akan muncul di sini..." readonly></textarea>
+        <p class="notice">Pembersihan otomatis tidak mengubah makna tulisan. Periksa kembali hasil sebelum menggunakannya.</p>
+      </section>
+
+      <section class="tool-panel" id="panel-comparator">
+        <div class="two-col">
+          <div class="field">
+            <label for="compare-a">Teks sumber / versi lama</label>
+            <textarea id="compare-a" placeholder="Masukkan teks pertama..."></textarea>
+          </div>
+          <div class="field">
+            <label for="compare-b">Teks revisi / versi baru</label>
+            <textarea id="compare-b" placeholder="Masukkan teks kedua..."></textarea>
+          </div>
+        </div>
+        <div class="row">
+          <button class="btn primary" id="compare-run" type="button">Bandingkan teks</button>
+          <button class="btn" id="compare-swap" type="button">Tukar teks</button>
+          <button class="btn" id="compare-copy" type="button">Salin hasil teks baru</button>
+        </div>
+        <div style="margin-top:18px">
+          <label>Hasil perbandingan berbasis baris</label>
+          <div class="result" id="compare-output" aria-live="polite">Masukkan dua teks, lalu tekan Bandingkan teks.</div>
+          <p class="notice">
+            Hijau menandakan baris yang ditambahkan, merah menandakan baris yang dihapus.
+            Baris yang sama ditampilkan tanpa penanda. Perbandingan ini berbasis baris,
+            bukan analisis makna atau terjemahan otomatis.
+          </p>
+        </div>
+      </section>
+
+      <section class="tool-panel" id="panel-glossary">
+        <div class="two-col">
+          <div class="field">
+            <label for="glossary-source">Istilah sumber</label>
+            <input id="glossary-source" placeholder="Contoh: Immortal Aperture">
+          </div>
+          <div class="field">
+            <label for="glossary-target">Istilah terjemahan</label>
+            <input id="glossary-target" placeholder="Masukkan padanan istilah">
+          </div>
+        </div>
+        <div class="field">
+          <label for="glossary-notes">Catatan (opsional)</label>
+          <input id="glossary-notes" placeholder="Contoh: Pertahankan istilah dalam bahasa Inggris">
+        </div>
+        <div class="row">
+          <button class="btn primary" id="glossary-save" type="button">Tambah istilah</button>
+          <button class="btn" id="glossary-cancel" type="button" hidden>Batal mengedit</button>
+          <button class="btn" id="glossary-export" type="button">Ekspor JSON</button>
+          <button class="btn" id="glossary-import-button" type="button">Impor JSON</button>
+          <input type="file" id="glossary-import-file" accept=".json,application/json" hidden>
+        </div>
+        <div class="field" style="margin-top:18px">
+          <label for="glossary-search">Cari istilah</label>
+          <input id="glossary-search" placeholder="Cari istilah sumber, terjemahan, atau catatan...">
+        </div>
+        <p class="small" id="glossary-count">0 istilah tersimpan di perangkat ini.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Istilah sumber</th><th>Terjemahan</th><th>Catatan</th><th>Aksi</th></tr>
+            </thead>
+            <tbody id="glossary-list"></tbody>
+          </table>
+        </div>
+        <p class="notice">Data disimpan di browser pada perangkat ini. Ekspor JSON secara berkala untuk membuat cadangan dan memindahkan glosarium ke perangkat lain.</p>
+      </section>
+
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <strong>KaryaKit.</strong> Toolkit untuk penulis, penerjemah, dan kreator.<br>
+  Pemrosesan teks berlangsung secara lokal pada browser untuk fitur yang tersedia di versi ini.
+  Tidak ada layanan AI eksternal yang digunakan.<br>
+  <span>Versi MVP 1.0 · <a href="#tools-title">Kembali ke alat</a></span>
+  </footer>
+  
+<script>
+"use strict";
+
+const $ = (id) => document.getElementById(id);
+const statusEl = $("status");
+
+const toolInfo = {
+  counter: ["Word Counter", "Statistik tulisan diperbarui secara langsung."],
+  cleaner: ["Text Cleaner", "Bersihkan format teks tanpa layanan eksternal."],
+  comparator: ["Text Comparator", "Periksa perubahan antara dua versi teks."],
+  glossary: ["Glossary Manager", "Kelola istilah terjemahan di perangkat ini."]
+};
+
+let activeTool = "counter";
+let editingId = null;
+let glossary = loadGlossary();
+
+function showStatus(message, error = false) {
+  statusEl.textContent = message;
+  statusEl.style.color = error ? "var(--red)" : "var(--green)";
+}
+
+function openTool(name) {
+  if (!toolInfo[name]) return;
+  activeTool = name;
+  document.querySelectorAll(".tool-panel").forEach(panel => {
+    panel.classList.toggle("active", panel.id === "panel-" + name);
+  });
+  $("workspace-title").textContent = toolInfo[name][0];
+  $("workspace-description").textContent = toolInfo[name][1];
+  showStatus("");
+  $("workspace").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+document.querySelectorAll("[data-open]").forEach(button => {
+  button.addEventListener("click", () => openTool(button.dataset.open));
+});
+
+async function copyText(text) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const helper = document.createElement("textarea");
+      helper.value = text;
+      helper.style.position = "fixed";
+      helper.style.opacity = "0";
+      document.body.appendChild(helper);
+      helper.select();
+      const ok = document.execCommand("copy");
+      helper.remove();
+      if (!ok) throw new Error("Copy command gagal");
+    }
+    showStatus("Teks berhasil disalin.");
+  } catch (error) {
+    showStatus("Penyalinan otomatis gagal. Pilih teks hasil lalu salin secara manual.", true);
+  }
+}
+
+function countWords(text) {
+  const trimmed = text.trim();
+  if (!trimmed) return 0;
+  return trimmed.split(/\s+/u).length;
+}
+
+function countParagraphs(text) {
+  const trimmed = text.trim();
+  if (!trimmed) return 0;
+  return trimmed.split(/\n\s*\n/u).filter(part => part.trim()).length;
+}
+
+function updateCounter() {
+  const text = $("counter-input").value;
+  $("count-words").textContent = countWords(text).toLocaleString("id-ID");
+  $("count-chars").textContent = text.length.toLocaleString("id-ID");
+  $("count-no-spaces").textContent = text.replace(/\s/gu, "").length.toLocaleString("id-ID");
+  $("count-paragraphs").textContent = countParagraphs(text).toLocaleString("id-ID");
+}
+$("counter-input").addEventListener("input", updateCounter);
+$("counter-copy").addEventListener("click", () => copyText($("counter-input").value));
+$("counter-clear").addEventListener("click", () => {
+  $("counter-input").value = "";
+  updateCounter();
+  showStatus("Teks penghitung telah dibersihkan.");
+});
+
+function cleanText(text, mode) {
+  let output = text;
+  if (mode === "spaces" || mode === "all") {
+    output = output
+      .split("\n")
+      .map(line => line.replace(/[^\S\n]+/gu, " ").trim())
+      .join("\n");
+  }
+  if (mode === "trim" || mode === "all") {
+    output = output
+      .split("\n")
+      .map(line => line.trim())
+      .join("\n");
+  }
+  if (mode === "lines" || mode === "all") {
+    output = output.replace(/\n[ \t]*\n(?:[ \t]*\n)+/gu, "\n\n");
+  }
+  return output;
+}
+$("cleaner-run").addEventListener("click", () => {
+  $("cleaner-output").value = cleanText(
+    $("cleaner-input").value,
+    $("cleaner-mode").value
+  );
+  showStatus("Pembersihan teks selesai.");
+});
+$("cleaner-swap").addEventListener("click", () => {
+  $("cleaner-input").value = $("cleaner-output").value;
+  showStatus("Hasil dipindahkan ke kolom input.");
+});
+$("cleaner-copy").addEventListener("click", () => copyText($("cleaner-output").value));
+
+function escapeHTML(value) {
+  return value.replace(/[&<>"']/gu, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[character]);
+}
+
+function compareLines(a, b) {
+  const oldLines = a ? a.split("\n") : [];
+  const newLines = b ? b.split("\n") : [];
+  const n = oldLines.length;
+  const m = newLines.length;
+
+  if ((n + 1) * (m + 1) > 250000) {
+    return { error: "Teks terlalu besar untuk dibandingkan sekaligus. Coba bagi menjadi bagian yang lebih kecil." };
+  }
+
+  const dp = Array.from({ length: n + 1 }, () => new Uint32Array(m + 1));
+  for (let i = n - 1; i >= 0; i--) {
+    for (let j = m - 1; j >= 0; j--) {
+      dp[i][j] = oldLines[i] === newLines[j]
+        ? dp[i + 1][j + 1] + 1
+        : Math.max(dp[i + 1][j], dp[i][j + 1]);
+    }
+  }
+
+  const output = [];
+  let i = 0, j = 0;
+  while (i < n && j < m) {
+    if (oldLines[i] === newLines[j]) {
+      output.push({ type: "same", text: oldLines[i] });
+      i++; j++;
+    } else if (dp[i + 1][j] >= dp[i][j + 1]) {
+      output.push({ type: "removed", text: oldLines[i++] });
+    } else {
+      output.push({ type: "added", text: newLines[j++] });
+    }
+  }
+  while (i < n) output.push({ type: "removed", text: oldLines[i++] });
+  while (j < m) output.push({ type: "added", text: newLines[j++] });
+  return { output };
+}
+
+function runCompare() {
+  const result = compareLines($("compare-a").value, $("compare-b").value);
+  const container = $("compare-output");
+  if (result.error) {
+    container.textContent = result.error;
+    showStatus(result.error, true);
+    return;
+  }
+  if (!result.output.length) {
+    container.textContent = "Tidak ada teks untuk dibandingkan.";
+    return;
+  }
+  container.innerHTML = result.output.map(line => {
+    const prefix = line.type === "added" ? "+ "
+      : line.type === "removed" ? "− " : "  ";
+    const className = line.type === "added" ? "diff-added"
+      : line.type === "removed" ? "diff-removed" : "";
+    return '<span class="' + className + '">' +
+      escapeHTML(prefix + line.text) + '</span>';
+  }).join("\n");
+  showStatus("Perbandingan selesai.");
+}
+$("compare-run").addEventListener("click", runCompare);
+$("compare-swap").addEventListener("click", () => {
+  const a = $("compare-a").value;
+  $("compare-a").value = $("compare-b").value;
+  $("compare-b").value = a;
+  showStatus("Kedua teks telah ditukar.");
+});
+$("compare-copy").addEventListener("click", () => copyText($("compare-b").value));
+
+function loadGlossary() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem("karyakit-glossary") || "[]");
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(item =>
+      item && typeof item.id === "string" &&
+      typeof item.source === "string" &&
+      typeof item.target === "string" &&
+      typeof item.notes === "string"
+    );
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveGlossary() {
+  try {
+    localStorage.setItem("karyakit-glossary", JSON.stringify(glossary));
+    return true;
+  } catch (error) {
+    showStatus("Penyimpanan gagal. Periksa ruang penyimpanan browser.", true);
+    return false;
+  }
+}
+
+function resetGlossaryForm() {
+  editingId = null;
+  $("glossary-source").value = "";
+  $("glossary-target").value = "";
+  $("glossary-notes").value = "";
+  $("glossary-save").textContent = "Tambah istilah";
+  $("glossary-cancel").hidden = true;
+}
+
+function renderGlossary() {
+  const query = $("glossary-search").value.trim().toLocaleLowerCase();
+  const items = glossary.filter(item =>
+    [item.source, item.target, item.notes]
+      .some(value => value.toLocaleLowerCase().includes(query))
+  );
+  const tbody = $("glossary-list");
+  tbody.replaceChildren();
+
+  if (!items.length) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 4;
+    td.className = "empty";
+    td.textContent = query
+      ? "Tidak ada istilah yang cocok."
+      : "Belum ada istilah. Tambahkan istilah pertamamu.";
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+  } else {
+    items.forEach(item => {
+      const tr = document.createElement("tr");
+      [item.source, item.target, item.notes].forEach(value => {
+        const td = document.createElement("td");
+        td.textContent = value;
+        tr.appendChild(td);
+      });
+      const action = document.createElement("td");
+      const edit = document.createElement("button");
+      edit.className = "btn";
+      edit.type = "button";
+      edit.textContent = "Edit";
+      edit.addEventListener("click", () => {
+        editingId = item.id;
+        $("glossary-source").value = item.source;
+        $("glossary-target").value = item.target;
+        $("glossary-notes").value = item.notes;
+        $("glossary-save").textContent = "Simpan perubahan";
+        $("glossary-cancel").hidden = false;
+        $("glossary-source").focus();
+      });
+      const del = document.createElement("button");
+      del.className = "btn danger";
+      del.type = "button";
+      del.textContent = "Hapus";
+      del.addEventListener("click", () => {
+        if (!confirm('Hapus istilah "' + item.source + '"?')) return;
+        glossary = glossary.filter(entry => entry.id !== item.id);
+        if (saveGlossary()) {
+          renderGlossary();
+          showStatus("Istilah telah dihapus.");
+        }
+      });
+      action.append(edit, del);
+      tr.appendChild(action);
+      tbody.appendChild(tr);
+    });
+  }
+  $("glossary-count").textContent =
+    glossary.length.toLocaleString("id-ID") +
+    " istilah tersimpan di perangkat ini.";
+}
+
+$("glossary-save").addEventListener("click", () => {
+  const source = $("glossary-source").value.trim();
+  const target = $("glossary-target").value.trim();
+  const notes = $("glossary-notes").value.trim();
+
+  if (!source || !target) {
+    showStatus("Istilah sumber dan terjemahan wajib diisi.", true);
+    return;
+  }
+
+  const duplicate = glossary.some(item =>
+    item.source.toLocaleLowerCase() === source.toLocaleLowerCase() &&
+    item.id !== editingId
+  );
+  if (duplicate) {
+    showStatus("Istilah sumber tersebut sudah ada. Edit entri yang ada atau gunakan istilah lain.", true);
+    return;
+  }
+
+  if (editingId) {
+    glossary = glossary.map(item => item.id === editingId
+      ? { ...item, source, target, notes }
+      : item
+    );
+  } else {
+    glossary.push({
+      id: Date.now().toString(36) +
+        Math.random().toString(36).slice(2, 8),
+      source, target, notes
+    });
+  }
+
+  if (saveGlossary()) {
+    resetGlossaryForm();
+    renderGlossary();
+    showStatus("Istilah berhasil disimpan.");
+  }
+});
+
+$("glossary-cancel").addEventListener("click", resetGlossaryForm);
+$("glossary-search").addEventListener("input", renderGlossary);
+
+$("glossary-export").addEventListener("click", () => {
+  const blob = new Blob(
+    [JSON.stringify(glossary, null, 2)],
+    { type: "application/json;charset=utf-8" }
+  );
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "karyakit-glossary.json";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  showStatus("Ekspor dimulai. Simpan file JSON sebagai cadangan.");
+});
+
+$("glossary-import-button").addEventListener("click", () => {
+  $("glossary-import-file").click();
+});
+
+$("glossary-import-file").addEventListener("change", async event => {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  try {
+    if (file.size > 5 * 1024 * 1024) {
+      throw new Error("File terlalu besar. Batas impor adalah 5 MB.");
+    }
+    const parsed = JSON.parse(await file.text());
+    if (!Array.isArray(parsed)) {
+      throw new Error("Format tidak valid. File harus berupa array JSON.");
+    }
+    const imported = parsed.map(item => {
+      if (!item || typeof item.source !== "string" ||
+          typeof item.target !== "string") {
+        throw new Error("Setiap entri harus memiliki source dan target berupa teks.");
+      }
+      return {
+        id: typeof item.id === "string"
+          ? item.id
+          : Date.now().toString(36) +
+            Math.random().toString(36).slice(2, 8),
+        source: item.source.trim(),
+        target: item.target.trim(),
+        notes: typeof item.notes === "string" ? item.notes : ""
+      };
+    }).filter(item => item.source && item.target);
+
+    if (!confirm("Impor " + imported.length +
+      " istilah? Istilah dengan nama sumber yang sama akan digabung dan diperbarui.")) {
+      return;
+    }
+
+    const merged = new Map(
+      glossary.map(item => [item.source.toLocaleLowerCase(), item])
+    );
+    imported.forEach(item => {
+      const key = item.source.toLocaleLowerCase();
+      const previous = merged.get(key);
+      merged.set(key, previous
+        ? { ...previous, target: item.target, notes: item.notes }
+        : item
+      );
+    });
+    glossary = Array.from(merged.values());
+    if (saveGlossary()) {
+      renderGlossary();
+      showStatus(imported.length + " entri diproses dari file JSON.");
+    }
+  } catch (error) {
+    showStatus(error.message || "File tidak dapat dibaca.", true);
+  } finally {
+    event.target.value = "";
+  }
+});
+
+$("reset-tool").addEventListener("click", () => {
+  if (activeTool === "counter") {
+    $("counter-input").value = "";
+    updateCounter();
+  } else if (activeTool === "cleaner") {
+    $("cleaner-input").value = "";
+    $("cleaner-output").value = "";
+  } else if (activeTool === "comparator") {
+    $("compare-a").value = "";
+    $("compare-b").value = "";
+    $("compare-output").textContent =
+      "Masukkan dua teks, lalu tekan Bandingkan teks.";
+  } else if (activeTool === "glossary") {
+    resetGlossaryForm();
+    $("glossary-search").value = "";
+    renderGlossary();
+  }
+  showStatus("Input alat telah direset. Data glosarium yang tersimpan tidak dihapus.");
+});
+
+updateCounter();
+renderGlossary();
+</script>
+</body>
+</html>
